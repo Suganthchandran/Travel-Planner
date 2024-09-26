@@ -1,0 +1,85 @@
+.policy-container {
+    width: 90%;
+    margin: 0 auto;
+    background-color: #f4f6f9;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.policy-title {
+    font-family: 'Poppins', sans-serif;
+    color: #34495e;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.policy-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.policy-item {
+    width: 18%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.policy-item:hover {
+    transform: translateY(-10px);
+}
+
+.policy-icon {
+    font-size: 40px;
+    color: #3498db;
+    margin-bottom: 15px;
+}
+
+.policy-item h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.policy-item p {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+.highlight {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+    .policy-item {
+        width: 45%;
+    }
+
+    .policy-icon {
+        font-size: 35px;
+    }
+}
+
+@media (max-width: 768px) {
+    .policy-item {
+        width: 100%;
+    }
+    
+    .policy-title {
+        font-size: 1.8rem;
+    }
+
+    .policy-icon {
+        font-size: 30px;
+    }
+}

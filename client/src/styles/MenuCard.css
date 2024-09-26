@@ -1,0 +1,108 @@
+/* src/styles/MenuCard.css */
+.menu-book {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  perspective: 1000px;
+  border: 2px solid brown;
+  border-radius: 15px;
+  
+}
+
+.menu-flip-book {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+  background: #f7f7f7;
+}
+
+.menu-cover-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #e2d3c1;
+  color: #333;
+  position: relative;
+}
+
+.menu-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-bottom: 2px solid #b0855f;
+}
+
+.menu-cover-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  margin-top: 15px;
+  color: #b0855f;
+  position: absolute;
+  top: 82%;
+  left: 16%;
+  z-index: 1000;
+}
+
+.menu-page {
+  padding: 40px;
+  background: #f7f7f7;
+  color: #333;
+  font-family: 'Georgia', serif;
+  transition: all 0.5s ease;
+  height: 100%;
+}
+
+.menu-page h2 {
+  font-size: 24px;
+  color: #b0855f;
+  border-bottom: 2px solid #b0855f;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.menu-page ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu-page ul li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #555;
+}
+
+.menu-page ul li span {
+  transition: color 0.3s ease;
+}
+
+.menu-page ul li span:hover {
+  color: #b0855f;
+}
+
+.menu-thank-you-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #e2d3c1;
+  color: #333;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+}
+
+.menu-thank-you-page h1 {
+  font-size: 40px;
+  color: #b0855f;
+  margin-bottom: 20px;
+}
+
+.menu-thank-you-page p {
+  font-size: 20px;
+  color: #555;
+}

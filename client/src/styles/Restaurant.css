@@ -1,0 +1,45 @@
+.restaurant-main-image {
+    width: 100vw;
+    height: 80vh;
+}
+
+.restaurant-main-image img{
+    width: 100vw;
+    height: 80vh;
+    object-fit: cover;
+}
+
+.restaurant-content{
+    margin-top: 3rem;
+    padding: 2rem 9%;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.restaurant-content h1{
+    margin-bottom: 1.6rem;
+    font-weight: 700;
+    font-family: mooli;
+    font-size: 3.5rem;
+}
+
+.restaurant-content p{
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: rgb(65, 65, 65);
+}
+
+.restaurant-main-cards{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4rem;
+    justify-content: center;
+    margin-bottom: 5rem;
+}
+
+.restaurant-heading{
+    font-size: 3rem;
+    padding: 2rem 9%;
+    margin-bottom: 2rem;
+}

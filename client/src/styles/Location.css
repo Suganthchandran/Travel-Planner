@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.location{
+    background-color: rgb(236, 236, 236);
+    height: 100vh;
+}
+
+.location-content{
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 5rem;
+}
+
+.location-card{
+    cursor: pointer;
+}

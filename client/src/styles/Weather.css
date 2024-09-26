@@ -1,0 +1,37 @@
+.weather-main{
+    height: 35vh;
+    background-size: cover;
+    object-fit: contain;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    position: relative;
+}
+
+.weather-main h2{
+    font-size: 3rem;
+    font-weight: 700;
+    font-family: Montserrat;
+    margin-top: 1rem;
+}
+
+.weather-content{
+    margin-top: 1.3rem;
+    margin-right: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    justify-content: start;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.typewriter-text {
+    font-size: 3rem;
+    color: white; 
+    font-weight: bold;
+    margin-right: 4rem;
+}
