@@ -47,11 +47,12 @@ const Home = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+    
         const locationToSend = location ? location : selectedState;
-        
-        navigate('/location', { state: { location: locationToSend, date } });
+    
+        navigate(`/location/${locationToSend}`, { state: { location: locationToSend, date } });
     };
+    
 
     return (
         <div className='home'>

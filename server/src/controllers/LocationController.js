@@ -105,4 +105,19 @@ const updateLocation = async (req, res) => {
     }
 };
 
-export { addLocation, listLocations, removeLocation, updateLocation, findByIdLocation };
+const findByNameLocation = async (req, res) => {
+    try {
+        const location = await locationModel.findOne({ name: req.params.name });
+        if (!location) {
+            return res.status(404).json({ success: false, message: 'Location not found.' });
+        }
+        res.status(200).json({ success: true, location });
+    } catch (error) {
+        console.error('Error finding location by name:', error);
+        res.status(500).json({ success: false, message: 'Server error while finding location.' });
+    }
+};
+
+
+
+export { addLocation, listLocations, removeLocation, updateLocation, findByIdLocation, findByNameLocation };
