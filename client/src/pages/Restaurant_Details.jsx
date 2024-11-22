@@ -1,6 +1,6 @@
 // src/pages/Restaurant_Details.jsx
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { restaurants } from '../assets/assets';
 import Navbar from '../components/Navbar';
 import '../styles/Restaurant_Details.css';
@@ -10,6 +10,8 @@ import MenuCard from '../components/MenuCard';
 import Rating from '../components/Rating';
 import Cards from '../components/Cards';
 import { Tilt } from 'react-tilt';
+import { useFavourite } from '../context/FavouriteContext';
+import { useUser } from '@clerk/clerk-react';
 
 const Slideshow = ({ images }) => {
     const [currentImage, setCurrentImage] = useState(0);
@@ -38,10 +40,13 @@ const Slideshow = ({ images }) => {
 };
 
 const Restaurant_Details = () => {
-    const { state } = useLocation();
-    const { name } = state;
+    const { restaurantId } = useParams();
+    const { loading, error, addFavourite} = useFavourite();
+    const { user } = useUser();
 
-    const restaurant = restaurants.find(item => item.name === name);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const navigate = useNavigate();
 
@@ -50,15 +55,35 @@ const Restaurant_Details = () => {
         window.scrollTo(0, 0);
     };
 
-
-    const coverImages = Object.values(restaurant.cover_images);
-    const smallImages = Object.values(restaurant.small_images);
-
+    const [restaurant, setRestaurant] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0 });
 
-    const googleMapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&q=${encodeURIComponent(restaurant.name)}`;
+    useEffect(() => {
+        const fetchRestaurantData = async () => {
+            try {
+                const response = await fetch(`http://localhost:4000/api/restaurant/${restaurantId}`);
+                if (!response.ok) {
+                    throw new Error('Error fetching Restaurant data');
+                }
+                const data = await response.json();
+                setRestaurant(data.restaurant); // Set the place data
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        };
+
+        fetchRestaurantData();
+    }, [restaurantId]); 
+
+    if (!restaurant) {
+        return <div>Loading...</div>;
+    }
+
+    const googleMapUrl = restaurant.coordinates 
+    ? `https://www.google.com/maps/embed/v1/view?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&center=${restaurant.coordinates.lat},${restaurant.coordinates.lng}&zoom=15`
+    : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&q=${encodeURIComponent(restaurant.name)}`;
 
     const openModal = (image, event) => {
         setSelectedImage(image);
@@ -72,25 +97,17 @@ const Restaurant_Details = () => {
         setSelectedImage(null);
     };
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
-    const [recommendations, setRecommendations] = useState([]);
-
-    useEffect(() => {
-        const nearbyRestaurant = restaurants.filter(p => p.name !== restaurant.name).slice(0, 4);
-        const formattedRecommendations = nearbyRestaurant.map(p => ({
-            name: p.name,
-            image: p.image,
-        }));
-        setRecommendations(formattedRecommendations);
-    }, [restaurant]);
+    const handleFavourite = (name, itemId, image, place, userId, type) => {
+        addFavourite( userId, itemId, name, place, image, type )
+    }
 
     return (
         <div className={`restaurant-main ${isModalOpen ? 'blur-background' : ''}`}>
             <Navbar />
-            <Slideshow images={coverImages} />
+            <Slideshow images={restaurant.coverImages} />
             <div className='restaurant-content'>
                 <h1>{restaurant.name}</h1>
                 <p>{restaurant.desc}</p>
@@ -99,7 +116,7 @@ const Restaurant_Details = () => {
             <div className='restaurant-mid'>
 
                 <div className='small-images'>
-                    {smallImages.map((img, index) => (
+                    {restaurant.smallImages.map((img, index) => (
                         <img
                             key={index}
                             src={img}
@@ -121,7 +138,7 @@ const Restaurant_Details = () => {
                             </button>
                         </div>
                         <div>
-                            <button className='animated-button favorite-button'>
+                            <button className='animated-button favorite-button ' onClick={() => handleFavourite(restaurant.name, restaurant._id, restaurant.image,restaurant.place, user.id, "restaurant")}>
                                 <span className="button-text">Favourite</span>
                                 <span className='restaurant-button-icon'><FaHeart /></span>
                             </button>
@@ -149,7 +166,7 @@ const Restaurant_Details = () => {
             
             <div className='restaurant-menu-card'>
                         <h1>Menu :</h1>
-                        <MenuCard menu={restaurant.menu} image={restaurant.menu_image} />
+                        <MenuCard menu={restaurant.menu} image={restaurant.menuImage} />
                     </div>
 
                     <div className="vertical-line2"></div>
@@ -169,7 +186,7 @@ const Restaurant_Details = () => {
 
             </div>
 
-            <div className="restaurant-recommend">
+            {/* <div className="restaurant-recommend">
                 <h1>Recommended Restaurants Around {restaurant.place}</h1>
                 <div className="cards-container">
                     {recommendations.map((item, index) => (
@@ -183,7 +200,7 @@ const Restaurant_Details = () => {
                         </Tilt>
                     ))}
                 </div>
-            </div>
+            </div> */}
 
             {isModalOpen && (
                 <div className="modal" style={{ bottom: '-920px', left: '320px' }}>

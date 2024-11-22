@@ -1,6 +1,6 @@
 // src/pages/Hotels_hotel.jsx
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { hotels } from '../assets/assets';
 import Navbar from '../components/Navbar';
 import '../styles/Hotel_Details.css'; // Ensure you have this CSS file
@@ -10,9 +10,12 @@ import HotelPolicy from '../components/HotelPolicy';
 import Rating from '../components/Rating';
 import Cards from '../components/Cards';
 import { Tilt } from 'react-tilt';
+import { useFavourite } from '../context/FavouriteContext';
+import { useUser } from '@clerk/clerk-react';
 
 const Slideshow = ({ images }) => {
     const [currentImage, setCurrentImage] = useState(0);
+    
 
     React.useEffect(() => {
         const interval = setInterval(() => {
@@ -38,12 +41,16 @@ const Slideshow = ({ images }) => {
 };
 
 const Hotel_hotel = () => {
-    const { state } = useLocation();
-    const { name } = state;
+    const { hotelId } = useParams();
+    const { loading, error, addFavourite} = useFavourite();
+    const { user } = useUser();
 
-    console.log(state);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+    
 
-    const hotel = hotels.find(item => item.name === name);
+    console.log(hotelId)
 
     const navigate = useNavigate();
 
@@ -52,16 +59,37 @@ const Hotel_hotel = () => {
         window.scrollTo(0, 0);
     };
 
-
-
-    const coverImages = Object.values(hotel.cover_images);
-    const smallImages = Object.values(hotel.small_images);
-
+    const [hotel, setHotel] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0 });
 
-    const googleMapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&q=${encodeURIComponent(hotel.name)}`;
+        // Fetch place data by placeId
+        useEffect(() => {
+            const fetchHotelData = async () => {
+                try {
+                    const response = await fetch(`http://localhost:4000/api/hotel/${hotelId}`); // Assuming your API uses this endpoint
+                    if (!response.ok) {
+                        throw new Error('Error fetching Hotel data');
+                    }
+                    const data = await response.json();
+                    setHotel(data.hotel); // Set the place data
+                } catch (err) {
+                    console.error('Error:', err);
+                }
+            };
+    
+            fetchHotelData();
+        }, [hotelId]); 
+    
+        if (!hotel) {
+            return <div>Loading...</div>;
+        }
+    
+        const googleMapUrl = hotel.coordinates 
+        ? `https://www.google.com/maps/embed/v1/view?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&center=${hotel.coordinates.lat},${hotel.coordinates.lng}&zoom=15`
+        : `https://www.google.com/maps/embed/v1/place?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&q=${encodeURIComponent(hotel.name)}`;
+    
 
     const openModal = (image, event) => {
         setSelectedImage(image);
@@ -75,25 +103,17 @@ const Hotel_hotel = () => {
         setSelectedImage(null);
     };
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
-    const [recommendations, setRecommendations] = useState([]);
-
-    useEffect(() => {
-        const nearbyHotels = hotels.filter(p => p.name !== hotel.name).slice(0, 4);
-        const formattedRecommendations = nearbyHotels.map(p => ({
-            name: p.name,
-            image: p.image,
-        }));
-        setRecommendations(formattedRecommendations);
-    }, [hotel]);
+    const handleFavourite = (name, itemId, image, place, userId, type) => {
+        addFavourite( userId, itemId, name, place, image, type )
+    }
 
     return (
         <div className={`hotel-main ${isModalOpen ? 'blur-background' : ''}`}>
             <Navbar />
-            <Slideshow images={coverImages} />
+            <Slideshow images={hotel.coverImages} />
             <div className='hotel-content'>
                 <h1>{hotel.name}</h1>
                 <p>{hotel.desc}</p>
@@ -101,7 +121,7 @@ const Hotel_hotel = () => {
 
             <div className='hotel-mid'>
                 <div className='small-images'>
-                    {smallImages.map((img, index) => (
+                    {hotel.smallImages.map((img, index) => (
                         <img
                             key={index}
                             src={img}
@@ -123,7 +143,7 @@ const Hotel_hotel = () => {
                             </button>
                         </div>
                         <div>
-                            <button className='animated-button favorite-button'>
+                            <button className='animated-button favorite-button' onClick={() => handleFavourite(hotel.name, hotel._id, hotel.image,hotel.place, user.id, "hotel")}>
                                 <span className="button-text">Favourite</span>
                                 <span className='hotel-button-icon'><FaHeart /></span>
                             </button>
@@ -175,7 +195,7 @@ const Hotel_hotel = () => {
 
             <HotelPolicy />
 
-            <div className="hotel-recommend">
+            {/* <div className="hotel-recommend">
                 <h1>Recommended Places Around {hotel.place}</h1>
                 <div className="cards-container">
                     {recommendations.map((item, index) => (
@@ -189,7 +209,7 @@ const Hotel_hotel = () => {
                         </Tilt>
                     ))}
                 </div>
-            </div>
+            </div> */}
 
 
             {isModalOpen && (

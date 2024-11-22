@@ -9,13 +9,19 @@ import clear_sky from './clear_sky.jpeg'
 import place from './Places.jpg'
 import hotel from './Hotels.jpg'
 import restaurant from './Restaurant.jpg'
+import logo from './logo.png'
+import logo2 from './logo2.png'
+import Login from './Login.jpeg'
 
 export const assets = {
     intro_image,
     Home_image,
     place,
     hotel,
-    restaurant
+    restaurant,
+    logo,
+    logo2,
+    Login
 };
 
 export const data = [

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, useNavigate } from 'react-router-dom'; 
 import Navbar from '../components/Navbar';
 import Weather from '../components/Weather';
 import Cards from '../components/Cards';
 import { Tilt } from 'react-tilt';
 import { assets } from '../assets/assets';
+import '../styles/Location.css';
 
 const Location = () => {
     const { name } = useParams();
     const [locationData, setLocationData] = useState(null);
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate(); 
 
     const fetchLocationData = async () => {
         try {
@@ -31,7 +32,7 @@ const Location = () => {
     }, [name]);
 
     const handleCardClick = (path) => {
-        navigate(path); // Navigate to the specified path
+        navigate(path); 
     };
 
     if (error) return <div>{error}</div>;
@@ -39,13 +40,12 @@ const Location = () => {
     return (
         <div className='location'>
             <Navbar />
-            <Weather location={locationData ? locationData.name : ''} />
+            <Weather location={locationData ? locationData.name : ''} image={locationData ? locationData.image : ''} />
             <div>
                 {locationData ? (
                     <div>
                         <h1 style={{ color: 'black' }}>{locationData.name}</h1>
                         <p>{locationData.desc}</p>
-                        <img src={locationData.image} alt={locationData.name} className='location-image' />
                     </div>
                 ) : (
                     <p>Loading...</p>
@@ -53,17 +53,17 @@ const Location = () => {
             </div>
             {locationData && (
                 <div className='location-content'>
-                    <div className="location-card" onClick={() => handleCardClick('/places')}>
+                    <div className="location-card" onClick={() => handleCardClick(`/places/${locationData.name}`)}>
                         <Tilt>
                             <Cards name="TOURIST PLACES" image={assets.place} />
                         </Tilt>
                     </div>
-                    <div className="location-card" onClick={() => handleCardClick('/hotels')}>
+                    <div className="location-card" onClick={() => handleCardClick(`/hotels/${locationData.name}`)}>
                         <Tilt>
                             <Cards name="HOTELS" image={assets.hotel} />
                         </Tilt>
                     </div>
-                    <div className="location-card" onClick={() => handleCardClick('/restaurants')}>
+                    <div className="location-card" onClick={() => handleCardClick(`/restaurants/${locationData.name}`)}>
                         <Tilt>
                             <Cards name="RESTAURANTS" image={assets.restaurant} />
                         </Tilt>

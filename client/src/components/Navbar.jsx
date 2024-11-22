@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Navbar.css';
+import { useNavigate } from 'react-router-dom';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+import { assets } from '../assets/assets';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   const handleScroll = () => {
     if (window.scrollY > 50) {
@@ -21,7 +25,9 @@ const Navbar = () => {
 
   return (
     <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <div className="navbar-logo">Diago</div>
+      <div className="navbar-logo">
+        <img src={assets.logo2} />
+      </div>
       <nav className="navbar-content">
         <ul>
           <li><a href="#">Home</a></li>
@@ -32,7 +38,14 @@ const Navbar = () => {
         </ul>
       </nav>
       <div className="navbar-contact-info">
-        <a href="tel:+046000000000">Login</a>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+        <SignedOut>
+          <div className='navbar-login-button' onClick={()=> navigate('/login')}>
+            Login
+          </div>
+        </SignedOut>
       </div>
     </header>
   );

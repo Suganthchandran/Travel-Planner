@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { places } from '../assets/assets';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../styles/Place_Details.css';
 import { IoCall } from "react-icons/io5";
@@ -9,6 +8,8 @@ import { GiTicket } from "react-icons/gi";
 import Cards from '../components/Cards';
 import { Tilt } from 'react-tilt';
 import Rating from '../components/Rating';
+import { useFavourite } from '../context/FavouriteContext';
+import { useUser } from '@clerk/clerk-react';
 
 const Slideshow = ({ images }) => {
     const [currentImage, setCurrentImage] = useState(0);
@@ -37,8 +38,16 @@ const Slideshow = ({ images }) => {
 };
 
 const Place_Details = () => {
-    const { state } = useLocation();
-    const { name } = state;
+    const { placeId } = useParams();
+    const { loading, error, addFavourite} = useFavourite();
+    const { user } = useUser();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+    
+
+    console.log(placeId)
 
     const navigate = useNavigate();
 
@@ -47,15 +56,33 @@ const Place_Details = () => {
         window.scrollTo(0, 0);
     };
 
-
-    const place = places.find(item => item.name === name);
-
-    const coverImages = Object.values(place.cover_images);
-    const smallImages = Object.values(place.small_images);
-
+    const [place, setPlace] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePosition, setImagePosition] = useState({ top: 0, left: 0 });
+    const [recommendations, setRecommendations] = useState([]);
+
+    // Fetch place data by placeId
+    useEffect(() => {
+        const fetchPlaceData = async () => {
+            try {
+                const response = await fetch(`http://localhost:4000/api/place/findplace/${placeId}`); // Assuming your API uses this endpoint
+                if (!response.ok) {
+                    throw new Error('Error fetching place data');
+                }
+                const data = await response.json();
+                setPlace(data.placee); // Set the place data
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        };
+
+        fetchPlaceData();
+    }, [placeId]); 
+
+    if (!place) {
+        return <div>Loading...</div>;
+    }
 
     const googleMapUrl = place.coordinates 
     ? `https://www.google.com/maps/embed/v1/view?key=AIzaSyBW7gCrgWOcn76LTFgXqrZJzWNpWc8Bao8&center=${place.coordinates.lat},${place.coordinates.lng}&zoom=15`
@@ -75,36 +102,29 @@ const Place_Details = () => {
         setSelectedImage(null);
     };
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
+ 
+    const bestTime = JSON.parse(place.bestTime);  // If it is a stringified array
+    console.log("Best Time",bestTime);
 
-    const [recommendations, setRecommendations] = useState([]);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
-    useEffect(() => {
-        const nearbyPlaces = places.filter(p => p.name !== place.name).slice(0, 4);
-        const formattedRecommendations = nearbyPlaces.map(p => ({
-            name: p.name,
-            image: p.image,
-        }));
-        setRecommendations(formattedRecommendations);
-    }, [place]);
+    const handleFavourite = (name, itemId, image, place, userId, type) => {
+        addFavourite( userId, itemId, name, place, image, type )
+    }
 
     return (
         <div className={`details-main ${isModalOpen ? 'blur-background' : ''}`}>
             <Navbar />
-            <Slideshow images={coverImages} />
+            <Slideshow images={place.coverImages} />
             <div className='details-content'>
                 <h1>{place.name}</h1>
                 <p>{place.desc}</p>
             </div>
 
-
-
             <div className='details-mid'>
-                {/* 3x3 matrix images */}
                 <div className='small-images'>
-                    {smallImages.map((img, index) => (
+                     {place.smallImages.map((img, index) => (
                         <img
                             key={index}
                             src={img}
@@ -116,7 +136,6 @@ const Place_Details = () => {
 
                 <div className="vertical-line"></div>;
 
-                {/* Content */}
                 <div className='details-mid-right'>
 
                     <div className='details-button-group'>
@@ -126,7 +145,7 @@ const Place_Details = () => {
                             </button>
                         </div>
                         <div>
-                            <button className='animated-button favorite-button'>
+                            <button className='animated-button favorite-button' onClick={() => handleFavourite(place.name, place._id, place.image,place.place, user.id, "place")}>
                                 <span className="button-text">Favourite</span>
                                 <span className='details-button-icon'><FaHeart /></span>
                             </button>
@@ -141,7 +160,7 @@ const Place_Details = () => {
                     <div className='details-mid-right-second'>
                         <h1>Best Month to visit :</h1>
                         <ul>
-                            {place.Best_Time.map((item, index) => (
+                            {bestTime.map((item, index) => (  
                                 <li key={index}>{item}</li>
                             ))}
                         </ul>
@@ -153,18 +172,26 @@ const Place_Details = () => {
             <div className='details-end'>
                 <div className='timing-table'>
                     <h1>{place.name} Timings</h1>
-                    <table className='place-table'>
-                        <tr>
-                            <th>Day</th>
-                            <th>Timing</th>
-                        </tr>
-                        {place.schedule.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.day}</td>
-                                <td>{item.time}</td>
-                            </tr>
-                        ))}
-                    </table>
+                    <table className="place-table">
+  <thead>
+    <tr>
+      <th>Day</th>
+      <th>Timing</th>
+    </tr>
+  </thead>
+  <tbody>
+    {place.schedule.map((item, index) => (
+      item.day.map((day, dayIndex) => (
+        <tr key={`${index}-${dayIndex}`}>
+          <td>{day}</td>
+          <td>{item.time[0]}</td>
+        </tr>
+      ))
+    ))}
+  </tbody>
+</table>
+
+
                 </div>
 
                 <div className='vertical-line2'></div>
@@ -207,6 +234,7 @@ const Place_Details = () => {
                     <img className="modal-content" src={selectedImage} alt="Full-screen" />
                 </div>
             )}
+
         </div>
     );
 };

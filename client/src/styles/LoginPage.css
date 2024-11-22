@@ -1,0 +1,99 @@
+.login {
+    background-color: #181C14;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container {
+    background-color: #262724;
+    z-index: 1;
+}
+
+.login-image {
+    border-radius: 1.5rem 0px 0px 1.5rem;
+    z-index: 1;
+    position: relative;
+}
+
+.login-right {
+    z-index: 1;
+}
+
+.login::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -100px;
+    width: 40%;
+    height: 120%;
+    background: white;
+    transform: skewX(-15deg);
+    z-index: 0;
+}
+
+.login-left {
+    position: relative;
+    z-index: 1;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(0, 0, 0); 
+    z-index: 2;
+    border-radius: 1.5rem 0px 0px 1.5rem;
+}
+
+.cl-logoBox {
+    height: 90px;
+}
+
+.cl-internal-16vtwdp {
+    display: none;
+}
+
+.cl-internal-piyvrh {
+    display: none;
+}
+
+.cl-formButtonPrimary {
+    background-color: #02A6A6;
+    font-weight: 700;
+}
+
+.cl-formButtonPrimary:hover {
+    background-color: #027c7c;
+}
+
+.login-logo {
+    position: absolute;
+    top:10px;
+    z-index: 3;
+    width: 150px;
+}
+
+.login-p1 {
+    position: absolute;
+    z-index: 3;
+    top: 35%;
+    left: 25%;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.login-p2 {
+    position: absolute;
+    z-index: 3;
+    top: 45%;
+    left: 30%;
+    color: white;
+    font-size: 1.6rem;
+}

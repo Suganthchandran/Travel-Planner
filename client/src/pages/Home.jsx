@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar';
 import { motion } from 'framer-motion';
 import { ImAirplane } from "react-icons/im";
 import Card from '../components/Home-Card';
+import { useUser } from '@clerk/clerk-react';
 
 const Home = () => {
     const [location, setLocation] = useState(""); 
@@ -18,6 +19,9 @@ const Home = () => {
     const [selectedCountry, setSelectedCountry] = useState("");
     const [selectedState, setSelectedState] = useState("");
     const navigate = useNavigate();
+    const {user} = useUser();
+
+    console.log("user:",user);
 
     useEffect(() => {
         const allCountries = Country.getAllCountries();
@@ -141,14 +145,14 @@ const Home = () => {
                 </motion.form>
             </div>
 
-            <div className='home-popular'>
+            {/* <div className='home-popular'>
                 <h1 className='home-popular-heading'>Popular Places</h1>
                 <div className="card-list">
                     {data.map((item, index) => (
                         <Card key={index} {...item} />
                     ))}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

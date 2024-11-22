@@ -15,9 +15,10 @@
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-.navbar-logo {
-    font-size: 24px;
+.navbar-logo img{
     color: #fff;
+    width: 100px;
+    margin-top: -13px;
 }
 
 .navbar-content ul {
@@ -38,4 +39,16 @@
 .navbar-contact-info a {
     color: #fff;
     text-decoration: none;
+}
+
+.navbar-login-button {
+    padding: 6px 25px;
+    margin-top: -10px;
+    font-size: 1.2rem;
+    font-family: karla;
+    color: white;
+    background-color: rgb(0, 0, 0);
+    /* border: 1px solid white; */
+    cursor: pointer;
+    border-radius: 50px;
 }
